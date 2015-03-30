@@ -42,12 +42,18 @@ public class ApiGatewayApplication {
 
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/index.html", "/home.html", "/")
-			.permitAll().anyRequest().authenticated()
+			// @formatter:off
+			http
+				.logout()
+			.and()
+				.antMatcher("/**").authorizeRequests()
+				.antMatchers("/index.html", "/home.html", "/", "/login").permitAll()
+				.anyRequest().authenticated()
 			.and()
 				.csrf()
 				.csrfTokenRepository(csrfTokenRepository()).and()
 				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+			// @formatter:on
 		}
 
 		private Filter csrfHeaderFilter() {
